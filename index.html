@@ -1,0 +1,1074 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BLOT Search Engine</title>
+
+<script src="https://cdn.tailwindcss.com"></script>
+
+<link rel="stylesheet"
+href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css"/>
+
+<style>
+
+@import url('https://fonts.googleapis.com/css2?family=Google+Sans:wght@400;500;700&display=swap');
+
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+}
+
+body{
+font-family:'Google Sans',Arial,sans-serif;
+background:white;
+overflow-x:hidden;
+}
+
+html{
+scroll-behavior:smooth;
+}
+
+.blot-b{color:#4285F4;}
+.blot-l{color:#EA4335;}
+.blot-o{color:#FBBC05;}
+.blot-t{color:#34A853;}
+
+.search-bar:focus-within{
+box-shadow:0 4px 25px rgba(0,0,0,0.18);
+transform:translateY(-2px);
+}
+
+.result-card{
+transition:0.25s;
+}
+
+.result-card:hover{
+background:#fafafa;
+transform:translateY(-3px);
+}
+
+.fade{
+animation:fade .3s ease;
+}
+
+@keyframes fade{
+from{
+opacity:0;
+transform:translateY(10px);
+}
+to{
+opacity:1;
+transform:translateY(0);
+}
+}
+
+.typing::after{
+content:"|";
+animation:blink .7s infinite;
+}
+
+@keyframes blink{
+50%{
+opacity:0;
+}
+}
+
+.glow{
+box-shadow:0 0 30px rgba(59,130,246,.25);
+}
+
+.mobile-hide{
+display:flex;
+}
+
+.mobile-search{
+display:none;
+}
+
+@media(max-width:900px){
+
+.mobile-hide{
+display:none;
+}
+
+.mobile-search{
+display:flex;
+}
+
+.desktop-grid{
+display:block !important;
+}
+
+.left-col{
+width:100% !important;
+}
+
+.right-col{
+width:100% !important;
+margin-top:25px;
+}
+
+#images-grid{
+grid-template-columns:repeat(2,1fr)!important;
+}
+
+.logo-big{
+width:90px!important;
+height:90px!important;
+}
+
+.blot-title{
+font-size:55px!important;
+}
+
+.search-main{
+padding:18px!important;
+}
+
+.search-input-main{
+font-size:18px!important;
+}
+
+.navbar{
+padding:12px!important;
+}
+
+.nav-title{
+font-size:24px!important;
+}
+
+#videos-grid img{
+width:100%!important;
+height:180px!important;
+}
+
+.video-card{
+flex-direction:column!important;
+}
+
+}
+
+@media(max-width:600px){
+
+#images-grid{
+grid-template-columns:1fr!important;
+}
+
+.blot-title{
+font-size:42px!important;
+}
+
+.logo-big{
+width:70px!important;
+height:70px!important;
+}
+
+.search-input-main{
+font-size:16px!important;
+}
+
+.ai-box{
+padding:20px!important;
+}
+
+}
+
+</style>
+</head>
+
+<body class="text-gray-900">
+
+<!-- NAVBAR -->
+
+<nav class="navbar flex justify-between items-center px-8 py-3 border-b bg-white sticky top-0 z-50">
+
+<div class="flex items-center gap-3">
+
+<img
+src="logo.png"
+class="w-12 h-12 rounded-2xl shadow-lg object-cover">
+
+<h1 class="nav-title text-3xl font-bold tracking-tight">
+
+<span class="blot-b">B</span>
+<span class="blot-l">L</span>
+<span class="blot-o">O</span>
+<span class="blot-t">T</span>
+
+</h1>
+
+</div>
+
+<div class="mobile-hide items-center gap-6 text-sm">
+
+<a href="#" class="hover:underline">Bmail</a>
+<a href="#" class="hover:underline">Images</a>
+<a href="#" class="hover:underline">Videos</a>
+<a href="#" class="hover:underline">News</a>
+
+<button onclick="toggleApps()"
+class="w-10 h-10 hover:bg-gray-100 rounded-full flex items-center justify-center text-xl">
+
+<i class="fas fa-th"></i>
+
+</button>
+
+<button
+onclick="openAuth()"
+class="bg-blue-600 hover:bg-blue-700 text-white px-5 py-2 rounded-full shadow-xl">
+
+<i class="fas fa-user mr-2"></i>
+Bmail Login
+
+</button>
+
+</div>
+
+<div class="mobile-search gap-3">
+
+<button onclick="openAuth()"
+class="bg-blue-600 text-white px-4 py-2 rounded-full">
+
+<i class="fas fa-user"></i>
+
+</button>
+
+</div>
+
+</nav>
+
+<!-- LOGIN MODAL -->
+
+<div id="auth-modal"
+class="hidden fixed inset-0 bg-black/50 z-50 flex items-center justify-center px-5">
+
+<div class="bg-white w-full max-w-md rounded-3xl p-8 shadow-2xl fade">
+
+<div class="flex items-center gap-4 mb-8">
+
+<img
+src="logo.png"
+class="w-16 h-16 rounded-2xl object-cover">
+
+<div>
+
+<h2 class="text-3xl font-bold">
+Bmail
+</h2>
+
+<p class="text-gray-500">
+Login to Becky AI
+</p>
+
+</div>
+
+</div>
+
+<input
+id="email"
+type="email"
+placeholder="name@bmail.com"
+class="w-full border rounded-2xl px-5 py-4 mb-4 text-lg outline-none">
+
+<input
+id="password"
+type="password"
+placeholder="Password"
+class="w-full border rounded-2xl px-5 py-4 mb-6 text-lg outline-none">
+
+<div class="flex gap-4">
+
+<button
+onclick="registerUser()"
+class="flex-1 bg-black text-white py-4 rounded-2xl hover:opacity-90">
+
+Register
+
+</button>
+
+<button
+onclick="loginUser()"
+class="flex-1 bg-blue-600 text-white py-4 rounded-2xl hover:bg-blue-700">
+
+Login
+
+</button>
+
+</div>
+
+<button
+onclick="closeAuth()"
+class="mt-5 w-full text-gray-500 hover:text-black">
+
+Close
+
+</button>
+
+</div>
+
+</div>
+
+<div class="max-w-7xl mx-auto px-4 md:px-6">
+
+<!-- HOME -->
+
+<div id="home" class="pt-10 md:pt-16">
+
+<!-- LOGO -->
+
+<div class="flex justify-center mb-12">
+
+<div class="flex items-center gap-5">
+
+<img
+src="/static/logo.png"
+class="logo-big w-28 h-28 object-cover rounded-3xl shadow-2xl glow">
+
+<h1 class="blot-title text-7xl md:text-8xl font-normal tracking-tighter">
+
+<span class="blot-b">B</span>
+<span class="blot-l">L</span>
+<span class="blot-o">O</span>
+<span class="blot-t">T</span>
+
+</h1>
+
+</div>
+
+</div>
+
+<!-- SEARCH -->
+
+<div class="max-w-4xl mx-auto">
+
+<div class="search-main search-bar bg-white border border-gray-300 rounded-3xl px-5 md:px-8 py-5 md:py-6 flex items-center shadow-lg transition-all">
+
+<i class="fas fa-search text-gray-400 text-2xl md:text-3xl mr-4 md:mr-6"></i>
+
+<input
+id="search-input"
+type="text"
+placeholder="Search with Becky AI..."
+class="search-input-main flex-1 outline-none text-xl md:text-2xl"
+onkeypress="if(event.key==='Enter') search()">
+
+<div class="flex gap-4">
+
+<button onclick="voiceSearch()"
+class="text-blue-600">
+
+<i class="fas fa-microphone text-2xl md:text-3xl"></i>
+
+</button>
+
+<button onclick="imageSearch()"
+class="text-blue-600">
+
+<i class="fas fa-camera text-2xl md:text-3xl"></i>
+
+</button>
+
+</div>
+
+</div>
+
+</div>
+
+<!-- AI PANEL -->
+
+<div class="mt-14 max-w-5xl mx-auto">
+
+<div class="ai-box bg-gradient-to-r from-violet-100 to-blue-100 border border-violet-300 rounded-3xl p-5 md:p-8 shadow-lg">
+
+<div class="flex items-center gap-5 mb-6">
+
+<div class="w-14 h-14 md:w-16 md:h-16 rounded-2xl bg-gradient-to-br from-purple-600 to-blue-600 text-white flex items-center justify-center text-3xl md:text-4xl">
+
+✦
+
+</div>
+
+<div>
+
+<h2 class="text-2xl md:text-3xl font-bold">
+Becky AI Mode
+</h2>
+
+<p class="text-gray-600 text-sm md:text-base">
+Powered by Ollama • TinyLlama
+</p>
+
+</div>
+
+</div>
+
+<div class="flex flex-col md:flex-row gap-4">
+
+<input
+id="ai-prompt"
+type="text"
+placeholder="Ask Becky AI anything..."
+class="flex-1 border border-gray-300 rounded-2xl px-6 py-4 text-lg outline-none">
+
+<button
+onclick="askBeckyAI()"
+class="bg-gradient-to-r from-blue-600 to-purple-600 text-white px-8 py-4 rounded-2xl hover:opacity-90">
+
+Ask Becky
+
+</button>
+
+</div>
+
+<div
+id="ai-response"
+class="mt-8 bg-white rounded-2xl p-6 text-lg leading-relaxed border hidden"></div>
+
+</div>
+
+</div>
+
+</div>
+
+<!-- RESULTS -->
+
+<div id="results"
+class="hidden pt-8 pb-16 fade">
+
+<!-- TOP BAR -->
+
+<div class="flex flex-col md:flex-row md:items-center md:justify-between border-b pb-4 mb-8 gap-5">
+
+<div class="flex flex-wrap gap-6 text-sm">
+
+<button onclick="showAll()"
+class="text-blue-600 border-b-2 border-blue-600 pb-3 font-medium">
+
+All
+
+</button>
+
+<button onclick="showImages()"
+class="hover:text-blue-600">
+
+Images
+
+</button>
+
+<button onclick="showVideos()"
+class="hover:text-blue-600">
+
+Videos
+
+</button>
+
+<button onclick="showNews()"
+class="hover:text-blue-600">
+
+News
+
+</button>
+
+</div>
+
+<div class="flex gap-3">
+
+<button
+onclick="goHome()"
+class="px-5 py-2 bg-gray-100 hover:bg-gray-200 rounded-full">
+
+← Back
+
+</button>
+
+<button
+onclick="search()"
+class="px-5 py-2 bg-blue-600 text-white hover:bg-blue-700 rounded-full">
+
+Search
+
+</button>
+
+</div>
+
+</div>
+
+<h2 id="query"
+class="text-2xl md:text-3xl font-medium mb-8"></h2>
+
+<!-- AI OVERVIEW -->
+
+<div class="bg-gradient-to-r from-amber-50 to-sky-50 border border-amber-300 rounded-3xl p-5 md:p-8 mb-12">
+
+<div class="flex items-center gap-4 mb-6">
+
+<div class="w-12 h-12 bg-gradient-to-br from-purple-600 to-pink-500 rounded-2xl flex items-center justify-center text-2xl md:text-3xl text-white">
+
+✦
+
+</div>
+
+<h3 class="text-xl md:text-2xl font-semibold">
+Becky AI Overview
+</h3>
+
+</div>
+
+<p id="ai-answer"
+class="text-base md:text-lg leading-relaxed text-gray-800"></p>
+
+</div>
+
+<div class="desktop-grid flex flex-col lg:flex-row gap-10">
+
+<!-- LEFT -->
+
+<div class="left-col w-full lg:w-[70%]">
+
+<!-- IMAGES -->
+
+<div id="images-tab"
+class="hidden mt-10">
+
+<h2 class="text-3xl font-semibold mb-8">
+🖼️ Image Results
+</h2>
+
+<div id="images-grid"
+class="grid grid-cols-3 gap-5"></div>
+
+</div>
+
+<!-- VIDEOS -->
+
+<div id="videos-tab"
+class="hidden mt-10">
+
+<h2 class="text-3xl font-semibold mb-8">
+🎥 Video Results
+</h2>
+
+<div id="videos-grid"
+class="space-y-6"></div>
+
+</div>
+
+<!-- SEARCH RESULTS -->
+
+<div id="search-results"
+class="space-y-8"></div>
+
+</div>
+
+<!-- RIGHT -->
+
+<div class="right-col w-full lg:w-[30%] space-y-8">
+
+<div class="border border-gray-200 rounded-3xl p-6 shadow-sm">
+
+<h4 class="font-semibold text-lg mb-4">
+BLOT Search
+</h4>
+
+<img
+src="/static/logo.png"
+class="rounded-2xl w-full mb-4 object-cover">
+
+<p class="text-sm text-gray-600">
+
+AI Search Engine •
+Smart Ranking •
+Web Crawling •
+Becky AI
+
+</p>
+
+</div>
+
+<div class="border border-gray-200 rounded-3xl p-6 shadow-sm">
+
+<h4 class="font-semibold mb-3">
+Features
+</h4>
+
+<ul class="space-y-3 text-gray-700">
+
+<li>• AI Answers</li>
+<li>• Wikipedia Results</li>
+<li>• YouTube Links</li>
+<li>• Instagram Links</li>
+<li>• Image Engine</li>
+<li>• Video Engine</li>
+
+</ul>
+
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+<footer class="mt-20 py-10 text-center text-xs text-gray-500 border-t">
+
+India • © 2026 BLOT Search • Becky AI
+
+</footer>
+
+<script>
+
+function typeWriter(element,text,speed=20){
+
+element.innerHTML="";
+
+let i=0;
+
+function typing(){
+
+if(i<text.length){
+
+element.innerHTML += text.charAt(i);
+
+i++;
+
+setTimeout(typing,speed);
+
+}
+
+}
+
+typing();
+
+}
+
+async function search(){
+
+const q=document.getElementById('search-input').value.trim();
+
+if(!q)return;
+
+document.getElementById('home').classList.add('hidden');
+
+document.getElementById('results').classList.remove('hidden');
+
+document.getElementById('query').textContent=q;
+
+document.getElementById('ai-answer').innerHTML=
+`Becky AI searched the BLOT index for <strong>${q}</strong> and generated ranked intelligent results.`;
+
+const resultsDiv=document.getElementById('search-results');
+
+resultsDiv.innerHTML="";
+
+const links=[
+
+{
+title:`${q} - Wikipedia`,
+url:`https://en.wikipedia.org/wiki/${encodeURIComponent(q)}`
+},
+
+{
+title:`${q} Videos - YouTube`,
+url:`https://www.youtube.com/results?search_query=${encodeURIComponent(q)}`
+},
+
+{
+title:`${q} on Instagram`,
+url:`https://www.instagram.com/explore/tags/${encodeURIComponent(q)}`
+},
+
+{
+title:`${q} - GitHub`,
+url:`https://github.com/search?q=${encodeURIComponent(q)}`
+},
+
+{
+title:`${q} - Google Search`,
+url:`https://www.google.com/search?q=${encodeURIComponent(q)}`
+}
+
+];
+
+let html="";
+
+links.forEach(site=>{
+
+html+=`
+
+<div class="result-card p-5 rounded-2xl transition-all border">
+
+<div class="text-green-700 text-sm mb-1 break-all">
+${site.url}
+</div>
+
+<a
+href="${site.url}"
+target="_blank"
+class="text-blue-700 text-xl md:text-2xl hover:underline break-words">
+
+${site.title}
+
+</a>
+
+<p class="text-gray-600 mt-2">
+
+Open ${q} related content instantly.
+
+</p>
+
+</div>
+
+`;
+
+});
+
+resultsDiv.innerHTML=html;
+
+const imagesGrid=document.getElementById('images-grid');
+
+imagesGrid.innerHTML="";
+
+for(let i=1;i<=12;i++){
+
+const img=`https://source.unsplash.com/600x400/?${encodeURIComponent(q)},${i}`;
+
+imagesGrid.innerHTML+=`
+
+<a href="${img}" target="_blank">
+
+<img
+src="${img}"
+class="rounded-2xl shadow-md w-full h-52 object-cover hover:scale-105 transition-all">
+
+</a>
+
+`;
+
+}
+
+const videosGrid=document.getElementById('videos-grid');
+
+videosGrid.innerHTML="";
+
+for(let i=1;i<=6;i++){
+
+const yt=`https://www.youtube.com/results?search_query=${encodeURIComponent(q)}`;
+
+videosGrid.innerHTML+=`
+
+<a
+href="${yt}"
+target="_blank"
+class="block border border-gray-200 rounded-2xl p-5 hover:bg-gray-50">
+
+<div class="video-card flex gap-5">
+
+<img
+src="https://i.ytimg.com/vi/dQw4w9WgXcQ/hqdefault.jpg"
+class="rounded-xl w-72 h-40 object-cover">
+
+<div>
+
+<div class="text-red-600 text-sm mb-2">
+youtube.com
+</div>
+
+<div class="text-xl md:text-2xl text-blue-700 hover:underline">
+
+${q} Videos
+
+</div>
+
+<p class="text-gray-600 mt-3">
+
+Watch YouTube search results for ${q}
+
+</p>
+
+</div>
+
+</div>
+
+</a>
+
+`;
+
+}
+
+}
+
+async function askBeckyAI(){
+
+const prompt=document.getElementById('ai-prompt').value;
+
+if(!prompt)return;
+
+const responseBox=document.getElementById('ai-response');
+
+responseBox.classList.remove('hidden');
+
+responseBox.innerHTML=`
+<div class="animate-pulse text-blue-600">
+✦ Becky AI is thinking...
+</div>
+`;
+
+try{
+
+const response=await fetch("/ai",{
+
+method:"POST",
+
+headers:{
+"Content-Type":"application/json"
+},
+
+body:JSON.stringify({
+prompt:prompt
+})
+
+});
+
+const data=await response.json();
+
+responseBox.innerHTML=`
+
+<div class="flex items-start gap-4">
+
+<div class="w-12 h-12 rounded-2xl bg-gradient-to-br from-purple-600 to-blue-600 text-white flex items-center justify-center text-2xl">
+
+✦
+
+</div>
+
+<div>
+
+<div class="font-bold text-2xl mb-3">
+Becky AI
+</div>
+
+<div id="typing-text"
+class="text-gray-800 leading-relaxed whitespace-pre-wrap typing"></div>
+
+</div>
+
+</div>
+
+`;
+
+typeWriter(
+document.getElementById("typing-text"),
+data.response,
+15
+);
+
+}
+
+catch(e){
+
+responseBox.innerHTML=`
+
+<div class="text-red-600">
+
+❌ Ollama server not connected
+
+<br><br>
+
+Run these commands:
+
+<br><br>
+
+ollama run tinyllama
+
+<br>
+
+then restart Flask server.
+
+</div>
+
+`;
+
+}
+
+}
+
+function openAuth(){
+document.getElementById('auth-modal').classList.remove('hidden');
+}
+
+function closeAuth(){
+document.getElementById('auth-modal').classList.add('hidden');
+}
+
+function registerUser(){
+
+const email=document.getElementById('email').value;
+
+const password=document.getElementById('password').value;
+
+if(!email.endsWith("@bmail.com")){
+
+alert("Use a Bmail address");
+
+return;
+
+}
+
+localStorage.setItem(email,password);
+
+alert("Bmail account created");
+
+}
+
+function loginUser(){
+
+const email=document.getElementById('email').value;
+
+const password=document.getElementById('password').value;
+
+const saved=localStorage.getItem(email);
+
+if(saved===password){
+
+alert("Welcome to Becky AI");
+
+closeAuth();
+
+}
+
+else{
+
+alert("Invalid login");
+
+}
+
+}
+
+function showImages(){
+
+document.getElementById('images-tab').classList.remove('hidden');
+
+document.getElementById('videos-tab').classList.add('hidden');
+
+document.getElementById('search-results').classList.add('hidden');
+
+}
+
+function showVideos(){
+
+document.getElementById('videos-tab').classList.remove('hidden');
+
+document.getElementById('images-tab').classList.add('hidden');
+
+document.getElementById('search-results').classList.add('hidden');
+
+}
+
+function showAll(){
+
+document.getElementById('videos-tab').classList.add('hidden');
+
+document.getElementById('images-tab').classList.add('hidden');
+
+document.getElementById('search-results').classList.remove('hidden');
+
+}
+
+function showNews(){
+
+alert("News Search Coming Soon");
+
+}
+
+function goHome(){
+
+document.getElementById('home').classList.remove('hidden');
+
+document.getElementById('results').classList.add('hidden');
+
+}
+
+function voiceSearch(){
+
+if(!('webkitSpeechRecognition' in window)){
+
+alert("Voice search not supported");
+
+return;
+
+}
+
+const recognition=new webkitSpeechRecognition();
+
+recognition.lang="en-US";
+
+recognition.start();
+
+recognition.onresult=function(event){
+
+const transcript=event.results[0][0].transcript;
+
+document.getElementById('search-input').value=transcript;
+
+search();
+
+};
+
+}
+
+function imageSearch(){
+
+const q=document.getElementById('search-input').value;
+
+if(!q){
+
+alert("Enter search query first");
+
+return;
+
+}
+
+window.open(
+`https://www.google.com/search?tbm=isch&q=${encodeURIComponent(q)}`,
+"_blank"
+);
+
+}
+
+function toggleApps(){
+
+alert(`
+
+BLOT Apps
+
+• Becky AI
+• Bmail
+• BLOT Images
+• Video Intelligence
+• Knowledge Graph
+
+`);
+
+}
+
+document.addEventListener('keydown',(e)=>{
+
+if(e.key==='/'){
+
+e.preventDefault();
+
+document.getElementById('search-input').focus();
+
+}
+
+});
+
+</script>
+
+</body>
+</html>
